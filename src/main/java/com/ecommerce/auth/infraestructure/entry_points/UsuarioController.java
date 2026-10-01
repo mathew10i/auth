@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.*;
+import com.ecommerce.auth.domain.model.RespuestaUsuario;
 
 import java.util.Map;
 
@@ -21,18 +22,26 @@ public class UsuarioController {
     private final UsuarioMapper usuarioMapper;
 
     @PostMapping("/save")
-    public ResponseEntity<?> saveUsuario(@RequestBody UsuarioData usuarioData) {
-        try {
-            Usuario usuario = usuarioMapper.toUsuario(usuarioData);
-            Usuario usuarioValidadoGuardado = usuarioUseCase.guardarUsuario(usuario);
-            return new ResponseEntity<>(usuarioValidadoGuardado, HttpStatus.OK);
-        }catch (IllegalStateException e){
-            return new ResponseEntity<>(Map.of("mensaje", e.getMessage()), HttpStatus.CONFLICT);
-        }
+    public ResponseEntity<RespuestaUsuario> saveUsuario(
+            @RequestBody UsuarioData usuarioData) {
 
+
+        Usuario usuario =
+                usuarioMapper.toUsuario(usuarioData);
+
+
+        RespuestaUsuario respuesta =
+                usuarioUseCase.guardarUsuario(usuario);
+
+
+        return new ResponseEntity<>(
+                respuesta,
+                HttpStatus.OK
+        );
     }
 
     @GetMapping("/{idUsuario}")
+
     public ResponseEntity<?> findUsuarioById(
             @PathVariable("idUsuario") String idUsuario) {
 
@@ -68,6 +77,21 @@ public class UsuarioController {
 
         return ResponseEntity.ok("Usuario eliminado correctamente");
     }
+    @PostMapping("/login")
+    public ResponseEntity<?> loginUsuario(
+            @RequestBody UsuarioData usuarioData){
 
+
+        String mensajeRespuesta =
+                usuarioUseCase.loginUsuario(
+                        usuarioData.getCorreo(),
+                        usuarioData.getPassword()
+                );
+
+
+        return ResponseEntity.ok(mensajeRespuesta);
+    }
 }
+
+
 

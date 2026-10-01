@@ -79,4 +79,19 @@ public class UsuarioDataGatewayImpl implements UsuarioGetaway {
 
         usuarioDataJpaRepository.deleteById(usuarioId);
     }
+    @Override
+    public Usuario buscarUsuarioPorCorreo(String correo){
+
+        UsuarioData usuarioData =
+                usuarioDataJpaRepository
+                        .findByCorreo(correo)
+                        .orElseThrow(
+                                () -> new RuntimeException(
+                                        "Usuario no encontrado"
+                                )
+                        );
+
+
+        return usuarioMapper.toUsuario(usuarioData);
+    }
 }

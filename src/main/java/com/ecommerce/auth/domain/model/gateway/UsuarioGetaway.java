@@ -6,6 +6,7 @@ public interface UsuarioGetaway {
 
     Usuario guardarUsuario(Usuario usuario);
     boolean existeUsuarioPorCorreo(String correo);
+    Usuario buscarUsuarioPorCorreo(String correo);
 
     Usuario buscarUsuarioPorId(String usuarioId);
 
