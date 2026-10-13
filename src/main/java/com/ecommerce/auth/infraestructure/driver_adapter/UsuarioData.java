@@ -21,7 +21,7 @@ public class UsuarioData {
     @Column(nullable = false, unique = true, length = 120)
     private String correo;
 
-    @Column(nullable = false, unique = false, length = 20)
+    @Column(nullable = false, length = 255)
     private String password;
 
     private String rol;

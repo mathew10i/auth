@@ -1,11 +1,12 @@
 package com.ecommerce.auth.domain.usecase;
+import com.ecommerce.auth.domain.model.gateway.EncrypterGateway;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 import com.ecommerce.auth.domain.model.Usuario;
 import com.ecommerce.auth.domain.model.gateway.UsuarioGetaway;
-import jdk.swing.interop.SwingInterOpUtils;
 import lombok.RequiredArgsConstructor;
 import com.ecommerce.auth.domain.model.RespuestaUsuario;
+import com.ecommerce.auth.domain.model.gateway.EncrypterGateway;
 
 
 @RequiredArgsConstructor
@@ -13,6 +14,7 @@ public class UsuarioUseCase {
 
 
     private final UsuarioGetaway usuarioGetaway;
+    private final EncrypterGateway encrypterGateway;
 
 
 
@@ -38,17 +40,24 @@ public class UsuarioUseCase {
 
 
         // Validar correo duplicado
-        if (usuarioGetaway.existeUsuarioPorCorreo(usuario.getCorreo())) {
+        if (usuarioGetaway.existeUsuarioPorCorreo(
+                usuario.getCorreo()
+        )) {
 
             throw new IllegalStateException(
                     "Ya existe un usuario registrado con este correo."
             );
         }
 
+        String passwordEncrypt =
+                encrypterGateway.encrypt(
+                        usuario.getPassword()
+                );
+
+        usuario.setPassword(passwordEncrypt);
 
         Usuario usuarioGuardado =
                 usuarioGetaway.guardarUsuario(usuario);
-
 
         return new RespuestaUsuario(
                 "Usuario creado correctamente",
@@ -151,13 +160,19 @@ public class UsuarioUseCase {
         // PASSWORD
         if (usuario.getPassword() != null) {
 
-
             if (usuario.getPassword().isBlank()) {
 
                 throw new IllegalArgumentException(
                         "La contraseña no puede estar vacía"
                 );
             }
+
+            String passwordEncrypt =
+                    encrypterGateway.encrypt(
+                            usuario.getPassword()
+                    );
+
+            usuario.setPassword(passwordEncrypt);
         }
 
 
@@ -227,8 +242,10 @@ public class UsuarioUseCase {
 
 
         // Validar contraseña
-        if(!usuario.getPassword().equals(password)){
-
+        if (!encrypterGateway.checkPass(
+                password,
+                usuario.getPassword()
+        )) {
 
             throw new IllegalArgumentException(
                     "Contraseña incorrecta"

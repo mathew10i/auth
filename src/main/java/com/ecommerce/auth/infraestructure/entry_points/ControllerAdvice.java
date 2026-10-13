@@ -12,18 +12,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class ControllerAdvice {
 
 
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<?> manejarDatosInvalidos(
-            IllegalArgumentException error){
-
-
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(error.getMessage());
-    }
-
-
-
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<?> manejarNoEncontrado(
             RuntimeException error){
